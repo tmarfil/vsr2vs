@@ -1,4 +1,14 @@
-Kustomize can automatically update a VirtualServer manifest when new VirtualServerRoutes are created, focusing on routes that are one level deep from the root path.
+# NGINX Ingress VirtualServer Routes with Kustomize
+
+This repository contains a Kustomize-based solution for managing NGINX Ingress VirtualServer and VirtualServerRoute resources at scale.
+
+## Overview
+
+When managing hundreds or thousands of routes in a Kubernetes NGINX Ingress environment, maintaining a single manifest becomes unwieldy. This solution:
+
+1. Separates your base VirtualServer configuration from routes
+2. Automatically detects and incorporates new VirtualServerRoute manifests
+3. Dynamically generates route entries in the main VirtualServer
 
 ## Directory Structure
 
@@ -11,12 +21,13 @@ Kustomize can automatically update a VirtualServer manifest when new VirtualServ
 │   ├── logout-route.yaml
 │   ├── profile-route.yaml
 │   └── (any new route files)
+├── generate-routes.sh
 └── kustomization.yaml
 ```
 
-## Implementation Steps
+## Setup Instructions
 
-1. **Base VirtualServer Template** (without routes):
+### 1. Create the Base VirtualServer Template
 
 ```yaml
 # base/virtualserver.yaml
@@ -46,10 +57,22 @@ spec:
         pass: main-app
 ```
 
-2. **Create a Routes Generator Script** (`generate-routes.sh`):
+### 2. Create Base Kustomization File
+
+```yaml
+# base/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- virtualserver.yaml
+```
+
+### 3. Create the Routes Generator Script
 
 ```bash
 #!/bin/bash
+# generate-routes.sh
 
 # Output file to be dynamically created
 output_file="generated-routes.yaml"
@@ -81,18 +104,7 @@ EOF
 done
 ```
 
-3. **Create Base Kustomization File**:
-
-```yaml
-# base/kustomization.yaml
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-
-resources:
-- virtualserver.yaml
-```
-
-4. **Create Main Kustomization File** with Command to Generate Routes:
+### 4. Create Main Kustomization File
 
 ```yaml
 # kustomization.yaml
@@ -101,10 +113,8 @@ kind: Kustomization
 
 resources:
 - base
-- routes/login-route.yaml
-- routes/logout-route.yaml
-- routes/profile-route.yaml
-# Any new route files would be added here
+# Wildcard pattern to automatically include all route files
+- routes/*-route.yaml
 
 transformers:
 - |-
@@ -139,7 +149,7 @@ vars:
 
 ## Workflow for Adding a New Route
 
-1. **Create the VirtualServerRoute File**:
+1. **Create a new VirtualServerRoute file** in the `routes/` directory, following the naming convention `name-route.yaml`:
 
 ```yaml
 # routes/account-route.yaml
@@ -160,22 +170,23 @@ spec:
         pass: account-service
 ```
 
-2. **Add it to the resources in kustomization.yaml**:
-
-```yaml
-resources:
-- base
-- routes/login-route.yaml
-- routes/logout-route.yaml
-- routes/profile-route.yaml
-- routes/account-route.yaml  # New route added here
-```
-
-3. **Build and Apply**:
+2. **Run the generator script** to update the routes configuration:
 
 ```bash
 chmod +x generate-routes.sh
-./generate-routes.sh  # Generates the routes configuration
+./generate-routes.sh
+```
+
+3. **Apply the changes** to your cluster:
+
+```bash
 kustomize build . | kubectl apply -f -
 ```
 
+That's it! Any new VirtualServerRoute file you add to the routes directory will be automatically included in your build without any manual updates to configuration files.
+
+## Notes
+
+- All routes are assumed to be one level deep from root (e.g., `/login`, `/profile`)
+- Make sure your VirtualServerRoute file names match the path pattern
+- The generator script can be extended for more complex path structures if needed
