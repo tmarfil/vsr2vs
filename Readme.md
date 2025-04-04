@@ -13,17 +13,18 @@ Managing hundreds or thousands of routes within a single Kubernetes VirtualServe
 ## Directory Structure
 
 ```
+.
 ├── base/
 │   ├── kustomization.yaml
-│   └── virtualserver.yaml # Base VS definition
+│   └── virtualserver.yaml         # Base VS definition
 ├── routes/
-│   ├── login-route.yaml # Example VSR
-│   ├── logout-route.yaml # Example VSR
-│   ├── profile-route.yaml # Example VSR
+│   ├── login-route.yaml         # Example VSR
+│   ├── logout-route.yaml        # Example VSR
+│   ├── profile-route.yaml       # Example VSR
 │   └── (any new route files).yaml # Add new VSRs here
-├── generate-routes-patch.sh # Script to generate the patch
-├── kustomization.yaml # Main Kustomize file
-└── routes-patch.yaml # Generated patch file (add to .gitignore)
+├── generate-routes-patch.sh     # Script to generate the patch
+├── kustomization.yaml           # Main Kustomize file
+└── routes-patch.yaml            # Generated patch file (add to .gitignore)
 ```
 
 ## Setup Instructions
@@ -60,31 +61,26 @@ spec:
       action:
         pass: main-app
     # Dynamic routes referencing VirtualServerRoutes will be added via patch
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-IGNORE_WHEN_COPYING_END
-2. Create Base Kustomization File
+```
+
+### 2. Create Base Kustomization File
 
 This file simply includes the base VirtualServer manifest.
 
+```yaml
 # base/kustomization.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
 - virtualserver.yaml
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Yaml
-IGNORE_WHEN_COPYING_END
-3. Create the Routes Patch Generator Script
+```
 
-This script finds all *-route.yaml files in the routes/ directory and generates a Kustomize Strategic Merge Patch file (routes-patch.yaml) containing the necessary route entries for the main VirtualServer.
+### 3. Create the Routes Patch Generator Script
 
+This script finds all `*-route.yaml` files in the `routes/` directory and generates a Kustomize Strategic Merge Patch file (`routes-patch.yaml`) containing the necessary `route` entries for the main VirtualServer.
+
+```bash
 #!/bin/bash
 # generate-routes-patch.sh
 
@@ -128,19 +124,15 @@ EOF
 done
 
 echo "Generated ${output_file} successfully."
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Bash
-IGNORE_WHEN_COPYING_END
+```
 
-Note: Make the script executable: chmod +x generate-routes-patch.sh
+**Note:** Make the script executable: `chmod +x generate-routes-patch.sh`
 
-4. Create Main Kustomization File
+### 4. Create Main Kustomization File
 
 This file brings together the base configuration, all individual VirtualServerRoute resources, and applies the generated patch.
 
+```yaml
 # kustomization.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -154,93 +146,68 @@ resources:
 patchesStrategicMerge:
   # Apply the generated patch file containing route references
   - routes-patch.yaml
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Yaml
-IGNORE_WHEN_COPYING_END
-5. Git Ignore
+```
 
-Add the generated patch file to your .gitignore to avoid committing it to version control, as it's dynamically created.
+### 5. Git Ignore
 
+Add the generated patch file to your `.gitignore` to avoid committing it to version control, as it's dynamically created.
+
+```
 # .gitignore
 routes-patch.yaml
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-IGNORE_WHEN_COPYING_END
-Workflow for Adding a New Route
+```
 
-Create a new VirtualServerRoute file in the routes/ directory. Ensure the filename follows the name-route.yaml convention (e.g., account-route.yaml). The metadata.name inside the file should match the filename stem (e.g., account-route).
+## Workflow for Adding a New Route
 
-# routes/account-route.yaml
-apiVersion: k8s.nginx.org/v1
-kind: VirtualServerRoute
-metadata:
-  name: account-route # Should match filename stem
-  namespace: app      # Should match NAMESPACE in script and VS
-spec:
-  # host: myapp.example.com # Optional if inherited from VS
-  upstreams:
-    - name: account-service
-      service: account-svc
-      port: 80
-  subroutes:
-    # The path here defines the specific endpoint(s) handled by this VSR
-    # The path in the main VS (e.g., /account) acts as the prefix
-    - path: /details # Full path becomes /account/details
-      action:
-        pass: account-service
-    - path: /settings # Full path becomes /account/settings
-      action:
-        pass: account-service
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Yaml
-IGNORE_WHEN_COPYING_END
+1.  **Create a new VirtualServerRoute file** in the `routes/` directory. Ensure the filename follows the `name-route.yaml` convention (e.g., `account-route.yaml`). The `metadata.name` inside the file should match the filename stem (e.g., `account-route`).
 
-Run the generator script to update the routes-patch.yaml file:
+    ```yaml
+    # routes/account-route.yaml
+    apiVersion: k8s.nginx.org/v1
+    kind: VirtualServerRoute
+    metadata:
+      name: account-route # Should match filename stem
+      namespace: app      # Should match NAMESPACE in script and VS
+    spec:
+      # host: myapp.example.com # Optional if inherited from VS
+      upstreams:
+        - name: account-service
+          service: account-svc
+          port: 80
+      subroutes:
+        # The path here defines the specific endpoint(s) handled by this VSR
+        # The path in the main VS (e.g., /account) acts as the prefix
+        - path: /details # Full path becomes /account/details
+          action:
+            pass: account-service
+        - path: /settings # Full path becomes /account/settings
+          action:
+            pass: account-service
+    ```
 
-./generate-routes-patch.sh
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Bash
-IGNORE_WHEN_COPYING_END
+2.  **Run the generator script** to update the `routes-patch.yaml` file:
 
-(Optional) Verify the changes using Kustomize build:
+    ```bash
+    ./generate-routes-patch.sh
+    ```
 
-kustomize build .
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Bash
-IGNORE_WHEN_COPYING_END
+3.  **(Optional) Verify the changes** using Kustomize build:
 
-Inspect the output to ensure the new route entry referencing app/account-route (or similar) has been added to the main VirtualServer's spec.routes list.
+    ```bash
+    kustomize build .
+    ```
+    Inspect the output to ensure the new route entry referencing `app/account-route` (or similar) has been added to the main VirtualServer's `spec.routes` list.
 
-Apply the changes to your cluster:
+4.  **Apply the changes** to your cluster:
 
-kustomize build . | kubectl apply -f -
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Bash
-IGNORE_WHEN_COPYING_END
+    ```bash
+    kustomize build . | kubectl apply -f -
+    ```
 
-Any new VirtualServerRoute file added to the routes/ directory will be included in the build. Just remember to run the generate-routes-patch.sh script before building and applying to update the route references in the main VirtualServer.
+Any new VirtualServerRoute file added to the `routes/` directory will be included in the build. Just remember to run the `generate-routes-patch.sh` script before building and applying to update the route references in the main VirtualServer.
 
-Notes
+## Notes
 
-The generator script assumes a naming convention where the VirtualServerRoute filename is prefix-route.yaml, the resource name inside the file is prefix-route, and the desired path prefix in the main VirtualServer is /prefix. Adjust the script's logic (path_prefix extraction) if your convention differs.
-
-Ensure the namespace: specified in the VirtualServer, VirtualServerRoutes, and the NAMESPACE variable in the script are consistent.
-
-This approach relies on a manual script execution step before kustomize build. For fully automated GitOps workflows, consider alternative approaches like custom KRM Functions executed via kustomize fn run, which can perform similar logic directly within the Kustomize build process without requiring external script execution.
+*   The generator script assumes a naming convention where the VirtualServerRoute filename is `prefix-route.yaml`, the resource name inside the file is `prefix-route`, and the desired path prefix in the main VirtualServer is `/prefix`. Adjust the script's logic (`path_prefix` extraction) if your convention differs.
+*   Ensure the `namespace:` specified in the VirtualServer, VirtualServerRoutes, and the `NAMESPACE` variable in the script are consistent.
+*   This approach relies on a manual script execution step before `kustomize build`. For fully automated GitOps workflows, consider alternative approaches like custom KRM Functions executed via `kustomize fn run`, which can perform similar logic directly within the Kustomize build process without requiring external script execution.
