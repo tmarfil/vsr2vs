@@ -12,8 +12,6 @@ Managing hundreds or thousands of routes within a single Kubernetes VirtualServe
 
 ## Directory Structure
 
-
-.
 ├── base/
 │ ├── kustomization.yaml
 │ └── virtualserver.yaml # Base VS definition
