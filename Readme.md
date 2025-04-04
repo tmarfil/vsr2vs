@@ -12,6 +12,7 @@ Managing hundreds or thousands of routes within a single Kubernetes VirtualServe
 
 ## Directory Structure
 
+```
 ├── base/
 │ ├── kustomization.yaml
 │ └── virtualserver.yaml # Base VS definition
@@ -23,6 +24,7 @@ Managing hundreds or thousands of routes within a single Kubernetes VirtualServe
 ├── generate-routes-patch.sh # Script to generate the patch
 ├── kustomization.yaml # Main Kustomize file
 └── routes-patch.yaml # Generated patch file (add to .gitignore)
+```
 
 ## Setup Instructions
 
