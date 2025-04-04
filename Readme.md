@@ -12,19 +12,17 @@ Managing hundreds or thousands of routes within a single Kubernetes VirtualServe
 
 ## Directory Structure
 
-```
 ├── base/
-│ ├── kustomization.yaml
-│ └── virtualserver.yaml # Base VS definition
+│   ├── kustomization.yaml
+│   └── virtualserver.yaml # Base VS definition
 ├── routes/
-│ ├── login-route.yaml # Example VSR
-│ ├── logout-route.yaml # Example VSR
-│ ├── profile-route.yaml # Example VSR
-│ └── (any new route files).yaml # Add new VSRs here
+│   ├── login-route.yaml # Example VSR
+│   ├── logout-route.yaml # Example VSR
+│   ├── profile-route.yaml # Example VSR
+│   └── (any new route files).yaml # Add new VSRs here
 ├── generate-routes-patch.sh # Script to generate the patch
 ├── kustomization.yaml # Main Kustomize file
 └── routes-patch.yaml # Generated patch file (add to .gitignore)
-```
 
 ## Setup Instructions
 
