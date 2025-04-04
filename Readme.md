@@ -1,4 +1,4 @@
-Kustomize can utomatically update a VirtualServer manifest when new VirtualServerRoutes are created, focusing on routes that are one level deep from the root path.
+Kustomize can automatically update a VirtualServer manifest when new VirtualServerRoutes are created, focusing on routes that are one level deep from the root path.
 
 ## Directory Structure
 
