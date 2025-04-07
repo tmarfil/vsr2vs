@@ -126,6 +126,28 @@ done
 echo "Generated ${output_file} successfully."
 ```
 
+Here's an example of what the `routes-patch.yaml` file might look like with five entries:
+
+```yaml
+apiVersion: k8s.nginx.org/v1
+kind: VirtualServer
+metadata:
+  name: main-application
+  namespace: app
+spec:
+  routes:
+    - path: /login
+      route: app/login-route
+    - path: /dashboard
+      route: app/dashboard-route
+    - path: /profile
+      route: app/profile-route
+    - path: /settings
+      route: app/settings-route
+    - path: /api
+      route: app/api-route
+```
+
 **Note:** Make the script executable: `chmod +x generate-routes-patch.sh`
 
 ### 4. Create Main Kustomization File
