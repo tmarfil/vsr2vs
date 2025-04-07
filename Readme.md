@@ -126,7 +126,7 @@ done
 echo "Generated ${output_file} successfully."
 ```
 
-Here's an example of what the `routes-patch.yaml` file might look like with five entries:
+Here's an example of what the `routes-patch.yaml` file might look like with six VirtualServerRoute entries:
 
 ```yaml
 apiVersion: k8s.nginx.org/v1
