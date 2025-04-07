@@ -220,9 +220,13 @@ routes-patch.yaml
     ```bash
     kustomize build .
     ```
+    
+    `kustomize build .` is a dry-run operation that shows what would be applied to a cluster.
+    No changes are made to your Kubernetes cluster with this command alone.
+   
     Inspect the output to ensure the new route entry referencing `app/account-route` (or similar) has been added to the main VirtualServer's `spec.routes` list.
 
-4.  **Apply the changes** to your cluster:
+5.  **Apply the changes** to your cluster:
 
     ```bash
     kustomize build . | kubectl apply -f -
