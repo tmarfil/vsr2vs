@@ -146,6 +146,8 @@ spec:
       route: app/settings-route
     - path: /api
       route: app/api-route
+    - path: /account
+      route: app/account-route
 ```
 
 **Note:** Make the script executable: `chmod +x generate-routes-patch.sh`
