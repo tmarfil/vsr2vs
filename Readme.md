@@ -1,6 +1,6 @@
 # NGINX Ingress VirtualServer Routes with Kustomize
 
-This repository demonstrates a Kustomize-based approach for managing NGINX Ingress VirtualServer and VirtualServerRoute resources, particularly useful when dealing with a large number of routes.
+This repository demonstrates a [Kustomize-based approach[(https://kustomize.io/) for managing NGINX Ingress VirtualServer and VirtualServerRoute resources, particularly useful when dealing with a large number of routes.
 
 ## Overview
 
