@@ -71,7 +71,7 @@ spec:
       enable: true
   upstreams:
     - name: main-app
-      service: main-app-svc
+      service: nginx-test-svc
       port: 80
   # Define a base/default route here if needed.
   routes:
