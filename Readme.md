@@ -1,10 +1,10 @@
-# NGINX Ingress VirtualServer Routes with Kustomize
+# F5 NGINX Ingress VirtualServer Routes with Kustomize
 
-NGINX Ingress VirtualServerRoutes require maintaining route files AND manually updating VirtualServer references - a dual-maintenance problem that doesn't scale. This tutorial automates the integration so you only manage route files, and everything else is generated automatically.
+F5 NGINX Ingress VirtualServerRoutes require maintaining route files AND manually updating VirtualServer references - a dual-maintenance problem that doesn't scale. This tutorial automates the integration so you only manage route files, and everything else is generated automatically.
 
 ## The Challenge
 
-A recent customer engagement highlighted a common scalability problem with NGINX Ingress Controller: managing thousands of routes across multiple domains within monolithic `VirtualServer` manifests.
+A recent customer engagement highlighted a common scalability problem with F5 NGINX Ingress Controller: managing thousands of routes across multiple domains within monolithic `VirtualServer` manifests.
 
 **The Scale Problem:**
 - **Few domains** (2-5 host configurations)
