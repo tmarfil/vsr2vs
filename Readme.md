@@ -1,4 +1,4 @@
-# F5 NGINX Ingress VirtualServer Routes with Kustomize
+# Manage Thousands of F5 NGINX Ingress VirtualServerRoutes with Kustomize
 
 F5 NGINX Ingress VirtualServerRoutes require maintaining route files AND manually updating VirtualServer references - a dual-maintenance problem that doesn't scale. This tutorial automates the integration so you only manage route files, and everything else is generated automatically.
 
